@@ -4,7 +4,10 @@ const authenticateUser = require('../middlewares/authFirebase');
 
 const router = express.Router();
 
-router.post('/transaction', authenticateUser, txnController.createTransaction);
-router.get('/transaction/:id', authenticateUser, txnController.getTransactionsById);
+// router.post('/transactions', authenticateUser, txnController.createTransaction);
+// router.get('/transactions/:id', authenticateUser, txnController.getTransactionsById);
+router.post('/', authenticateUser, txnController.createTransaction);
+router.get('/:id', authenticateUser, txnController.getTransactionsById);
+
 
 module.exports = router;
