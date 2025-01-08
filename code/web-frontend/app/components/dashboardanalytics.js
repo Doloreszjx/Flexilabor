@@ -12,14 +12,56 @@ function DashboardAnalytics() {
   const [jobs, setJobs] = useState([]);
   const [activeJobs, setActiveJobs] = useState(0)
 
+  // useEffect(() => {
+  //   setUserInfo(JSON.parse(sessionStorage.getItem('userInfo')))
+  //   const fetchBalance = async () => {
+  //     const userInfo = sessionStorage.getItem('userInfo');
+  //     if (!userInfo) return;
+  //     const uid = JSON.parse(userInfo).uid;
+  //     try {
+  //       const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URI}/transaction/${uid}`, {
+  //         headers: {
+  //           Authorization: `Bearer ${sessionStorage.getItem('token')}`,
+  //         },
+  //       });
+  //       setBalance(response.data.data.netBalance);
+  //     } catch (err) {
+  //       console.error("Failed to load transactions. Please try again later.");
+  //     }
+  //   };
+
+  //   fetchBalance();
+
+  //   const fetchJobs = async () => {
+  //     const uid = JSON.parse(sessionStorage.getItem('userInfo')).uid
+  //     try {
+  //       const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URI}/jobsById/${uid}`, {
+  //         headers: {
+  //           Authorization: `Bearer ${sessionStorage.getItem('token')}`,
+  //         },
+  //       });
+  //       setJobs(response.data.data);
+  //       const tomorrow = new Date();
+  //       tomorrow.setDate(tomorrow.getDate() - 1);
+  //       const active = response.data.data.filter((el) => new Date(el.date).getTime() > tomorrow.getTime());
+  //       setActiveJobs(active.length)
+
+  //     } catch (err) {
+  //       console.log("Failed to load jobs. Please try again later.");
+  //     }
+  //   };
+
+  //   fetchJobs();
+  // }, []);
   useEffect(() => {
-    setUserInfo(JSON.parse(sessionStorage.getItem('userInfo')))
+    const storedUserInfo = sessionStorage.getItem('userInfo');
+    const parsedUserInfo = storedUserInfo ? JSON.parse(storedUserInfo) : {};
+    setUserInfo(parsedUserInfo);
+  
     const fetchBalance = async () => {
-      const userInfo = sessionStorage.getItem('userInfo');
-      if (!userInfo) return;
-      const uid = JSON.parse(userInfo).uid;
+      if (!parsedUserInfo.uid) return;
       try {
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URI}/transaction/${uid}`, {
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URI}/transaction/${parsedUserInfo.uid}`, {
           headers: {
             Authorization: `Bearer ${sessionStorage.getItem('token')}`,
           },
@@ -29,13 +71,11 @@ function DashboardAnalytics() {
         console.error("Failed to load transactions. Please try again later.");
       }
     };
-
-    fetchBalance();
-
+  
     const fetchJobs = async () => {
-      const uid = JSON.parse(sessionStorage.getItem('userInfo')).uid
+      if (!parsedUserInfo.uid) return;
       try {
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URI}/jobsById/${uid}`, {
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URI}/jobsById/${parsedUserInfo.uid}`, {
           headers: {
             Authorization: `Bearer ${sessionStorage.getItem('token')}`,
           },
@@ -44,15 +84,16 @@ function DashboardAnalytics() {
         const tomorrow = new Date();
         tomorrow.setDate(tomorrow.getDate() - 1);
         const active = response.data.data.filter((el) => new Date(el.date).getTime() > tomorrow.getTime());
-        setActiveJobs(active.length)
-
+        setActiveJobs(active.length);
       } catch (err) {
         console.log("Failed to load jobs. Please try again later.");
       }
     };
-
+  
+    fetchBalance();
     fetchJobs();
   }, []);
+  
 
   return (
     <div className="p-8  m-auto border rounded-xl shadow-md bg-white h-screen overflow-auto">
@@ -104,3 +145,4 @@ function DashboardAnalytics() {
 }
 
 export default DashboardAnalytics;
+
