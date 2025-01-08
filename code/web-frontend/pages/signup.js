@@ -35,6 +35,10 @@ function Signup() {
 	] = useCreateUserWithEmailAndPassword(auth);
 
 	const handleSignUp = async (e) => {
+
+		// 检查环境变量是否正确加载
+		console.log('API URL:', process.env.NEXT_PUBLIC_BACKEND_URI);
+
 		e.preventDefault();
 		if (password !== confirmPassword) {
 			alert("Password and Confirm Password doesn't match");
@@ -72,18 +76,47 @@ function Signup() {
 				};
 				sessionStorage.setItem('token', token);
 				try {
+					// 添加日志确认环境变量
+					console.log('API URL:', process.env.NEXT_PUBLIC_BACKEND_URI);
+					// const response = await axios.post(
+					// 	`${process.env.NEXT_PUBLIC_BACKEND_URI}/users`,
+					// 	data,
+					// 	config
+					// );
 					const response = await axios.post(
+						// 直接硬编码 URL 进行测试（后续确认环境变量后可改回）
+						// 'http://localhost:5000/api/users', // 临时测试地址
 						`${process.env.NEXT_PUBLIC_BACKEND_URI}/users`,
 						data,
-						config
+						{
+							headers: {
+								'Content-Type': 'application/json',
+								Authorization: `Bearer ${token}`, // 确保包含认证信息
+							},
+							withCredentials: true, // 确保支持跨域凭据
+						}
 					);
+					// 保存用户信息到sessionStorage
 					sessionStorage.setItem(
 						'userInfo',
 						JSON.stringify(response.data.data)
 					);
+					// 跳转到dashboard界面
 					router.push('/dashboard');
 				} catch (error) {
-					console.error('Error creating user:', error);
+					// console.error('Error creating user:', error);
+					// 打印详细错误信息
+					if (error.response) {
+						// 请求成功发送，但服务器返回状态码错误
+						console.error('Response error:', error.response.data);
+						console.error('Status code:', error.response.status);
+					} else if (error.request) {
+						// 请求发送失败，没有收到服务器响应
+						console.error('No response received:', error.request);
+					} else {
+						// 其他错误，例如配置错误
+						console.error('Axios error:', error.message);
+					}
 				}
 			}
 		} catch (err) {
