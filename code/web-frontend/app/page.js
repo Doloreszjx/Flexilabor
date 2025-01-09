@@ -19,7 +19,7 @@ export default function Home() {
 							From electricians to gardeners, we can help you hire.
 						</p>
 
-						<div className='space-x-4 mb-6'>
+						<div className='space-x-4 mb-6' style={{ display: 'flex' }}>
 							<a
 								href='#'
 								className='bg-white text-[#01ABF0] px-6 py-3 rounded-lg hover:bg-gray-100'

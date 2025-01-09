@@ -35,7 +35,6 @@ function Signup() {
 	] = useCreateUserWithEmailAndPassword(auth);
 
 	const handleSignUp = async (e) => {
-
 		// 检查环境变量是否正确加载
 		console.log('API URL:', process.env.NEXT_PUBLIC_BACKEND_URI);
 
@@ -51,8 +50,10 @@ function Signup() {
 		try {
 			const res = await createUserWithEmailAndPassword(email, password);
 			if (res) {
+				debugger;
+				console.log({ res });
 				const user = auth.currentUser;
-				const token = await user.getIdToken();
+				const token = await user.getIdToken(true);
 				const data = {
 					firstName: firstName,
 					lastName: lastName,
@@ -69,11 +70,6 @@ function Signup() {
 				workType != '' ? (data.workType = workType) : data;
 				tools != '' ? (data.tools = tools) : data;
 
-				const config = {
-					headers: {
-						Authorization: `Bearer ${token}`,
-					},
-				};
 				sessionStorage.setItem('token', token);
 				try {
 					// 添加日志确认环境变量

@@ -11,6 +11,7 @@ import axios from 'axios';
 function Signin() {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
+
 	const [
 		signInWithEmailAndPassword,
 		user,
@@ -23,28 +24,38 @@ function Signin() {
 		e.preventDefault();
 		try {
 			const res = await signInWithEmailAndPassword(email, password);
+			console.log({ email, password });
 			if (res) {
 				const user = auth.currentUser;
-				const token = await user.getIdToken();
-				sessionStorage.setItem('token', token);
-				const config = {
-					headers: {
-						Authorization: `Bearer ${token}`,
-					},
-				};
+				if (user && user.getIdToken) {
+					const token = await user.getIdToken();
+					sessionStorage.setItem('token', token);
 
-				try {
-					const response = await axios.get(
-						`${process.env.NEXT_PUBLIC_BACKEND_URI}/users/${email}`,
-						config
-					);
-					router.push('/dashboard');
-					sessionStorage.setItem(
-						'userInfo',
-						JSON.stringify(response.data.data[0])
-					);
-				} catch (error) {
-					console.error('Error getting  user:', error);
+					try {
+						console.log(
+							`${process.env.NEXT_PUBLIC_BACKEND_URI}/users/${email}`
+						);
+						const response = await axios.get(
+							`${process.env.NEXT_PUBLIC_BACKEND_URI}/users/${email}`,
+							{
+								headers: {
+									Authorization: `Bearer ${token}`,
+								},
+							}
+						);
+
+						console.log({ response });
+
+						router.push('/dashboard');
+						sessionStorage.setItem(
+							'userInfo',
+							JSON.stringify(response.data.data[0])
+						);
+					} catch (error) {
+						console.error('Error getting  user:', error);
+					}
+				} else {
+					console.error('User not authenticated or token generation failed.');
 				}
 			}
 		} catch (err) {
@@ -96,6 +107,12 @@ function Signin() {
 									className='w-full p-3 border rounded-lg mt-2'
 									required
 								/>
+								{/* <span
+									className={
+										('w-full p-3 border rounded-lg mt-2',
+										isShowPassword ? 'show-password' : 'hide-password')
+									}
+								/> */}
 							</div>
 							<div className='flex justify-between items-center mb-4'>
 								<label className='flex items-center'>
