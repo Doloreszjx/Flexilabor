@@ -138,8 +138,8 @@ const jobsRoutes = require('./routes/jobs.routes');
 const transactionRoutes = require('./routes/transaction.routes');
 
 // 路由配置
-// app.use('/api', userRoutes);
-app.use(`http://localhost:${PORT}/api`, userRoutes);
+app.use('/api', userRoutes);
+// app.use(`http://localhost:${PORT}/api`, userRoutes);
 app.use('/api', jobsRoutes);
 app.use('/api', transactionRoutes);
 

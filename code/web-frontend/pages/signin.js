@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import '@/app/globals.css';
 import Image from 'next/image';
 import { useSignInWithEmailAndPassword } from 'react-firebase-hooks/auth';
+// import { getAuth, signInWithEmailAndPassword } from 'firebase/auth/web-extension';
 import { auth } from '../app/firebase/config';
 import { useRouter } from 'next/router';
 import axios from 'axios';
