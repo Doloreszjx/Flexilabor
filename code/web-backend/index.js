@@ -117,7 +117,7 @@ const corsOptions = {
 	origin: 'http://localhost:3000', // 确保与前端端口一致
 	methods: 'GET,POST,PUT,DELETE,OPTIONS',
 	allowedHeaders: 'Content-Type,Authorization,Accept,X-Requested-With',
-	credentials: true // 支持 Cookies 和认证
+	credentials: true, // 支持 Cookies 和认证
 };
 app.use(cors(corsOptions)); // 应用 CORS 设置
 
@@ -138,7 +138,8 @@ const jobsRoutes = require('./routes/jobs.routes');
 const transactionRoutes = require('./routes/transaction.routes');
 
 // 路由配置
-app.use('/api', userRoutes);
+// app.use('/api', userRoutes);
+app.use(`http://localhost:${PORT}/api`, userRoutes);
 app.use('/api', jobsRoutes);
 app.use('/api', transactionRoutes);
 
