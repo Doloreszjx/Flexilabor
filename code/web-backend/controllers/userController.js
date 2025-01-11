@@ -3,18 +3,25 @@ const { successRes, errorRes } = require('../helpers/apiResponse');
 
 // Create user on sign up
 exports.createUser = async (req, res) => {
-	console.log({ res });
-	try {
-		const user = new User(req.body);
-		await user.save();
-		successRes(res, 'User added successfully', user, 200);
-	} catch (error) {
-		errorRes(res, 'Error creating user', error);
+	console.log('createUser');
+	const existingUser = await User.findOne({ email: req?.body?.email });
+	if (!!existingUser) {
+		errorRes(res, 'This email already exists. Please choose another one.');
+		console.log();
+	} else {
+		try {
+			const user = new User(req.body);
+			await user.save();
+			successRes(res, 'User added successfully1111', user, 200);
+		} catch (error) {
+			errorRes(res, 'Error creating user', error);
+		}
 	}
 };
 
 // Fetch user details by ID
 exports.getUserById = async (req, res) => {
+	console.log('getUserById');
 	try {
 		const user = await User.find({ email: req.params.id });
 		if (!user) return errorRes(res, 'User not found', null, 404);

@@ -47,73 +47,77 @@ function Signup() {
 			alert('Please fill all fields');
 			return;
 		}
+
 		try {
 			const res = await createUserWithEmailAndPassword(email, password);
+			debugger;
 			if (res) {
-				debugger;
+				// debugger;
 				console.log({ res });
-				const user = auth.currentUser;
-				const token = await user.getIdToken(true);
-				const data = {
-					firstName: firstName,
-					lastName: lastName,
-					email: email,
-					role:
-						role == 'Customer'
-							? 'Customer'
-							: isContractor == 'worker'
-							? 'Worker'
-							: 'Contractor',
-					uid: res?.user?.uid,
-				};
-				abn != '' ? (data.abn = abn) : data;
-				workType != '' ? (data.workType = workType) : data;
-				tools != '' ? (data.tools = tools) : data;
+				if (auth && auth.currentUser) {
+					const user = auth.currentUser;
+					const token = await user.getIdToken(true);
+					const data = {
+						firstName: firstName,
+						lastName: lastName,
+						email: email,
+						role:
+							role == 'Customer'
+								? 'Customer'
+								: isContractor == 'worker'
+								? 'Worker'
+								: 'Contractor',
+						uid: res?.user?.uid,
+					};
+					abn != '' ? (data.abn = abn) : data;
+					workType != '' ? (data.workType = workType) : data;
+					tools != '' ? (data.tools = tools) : data;
 
-				sessionStorage.setItem('token', token);
-				try {
-					// 添加日志确认环境变量
-					console.log('API URL:', process.env.NEXT_PUBLIC_BACKEND_URI);
-					// const response = await axios.post(
-					// 	`${process.env.NEXT_PUBLIC_BACKEND_URI}/users`,
-					// 	data,
-					// 	config
-					// );
-					const response = await axios.post(
-						// 直接硬编码 URL 进行测试（后续确认环境变量后可改回）
-						// 'http://localhost:5000/api/users', // 临时测试地址
-						`${process.env.NEXT_PUBLIC_BACKEND_URI}/users`,
-						data,
-						{
-							headers: {
-								'Content-Type': 'application/json',
-								Authorization: `Bearer ${token}`, // 确保包含认证信息
-							},
-							withCredentials: true, // 确保支持跨域凭据
+					sessionStorage.setItem('token', token);
+					sessionStorage.setItem('uid', user.uid); // 用uid作为用户识别的唯一标识
+					try {
+						// 添加日志确认环境变量
+						console.log('API URL:', process.env.NEXT_PUBLIC_BACKEND_URI);
+						const response = await axios.post(
+							// 直接硬编码 URL 进行测试（后续确认环境变量后可改回）
+							// 'http://localhost:5000/api/users', // 临时测试地址
+							`${process.env.NEXT_PUBLIC_BACKEND_URI}/users`,
+							data,
+							{
+								headers: {
+									'Content-Type': 'application/json',
+									// Authorization: `Bearer ${token}`, // 调用本地接口不需要进行firebase认证
+								},
+								withCredentials: true, // 确保支持跨域凭据
+							}
+						);
+						// 保存用户信息到sessionStorage
+						sessionStorage.setItem(
+							'userInfo',
+							JSON.stringify(response.data.data)
+						);
+						// 跳转到dashboard界面
+						router.push('/dashboard');
+					} catch (error) {
+						// console.error('Error creating user:', error);
+						// 打印详细错误信息
+						if (error.response) {
+							// 请求成功发送，但服务器返回状态码错误
+							console.error('Response error:', error.response.data);
+							console.error('Status code:', error.response.status);
+						} else if (error.request) {
+							// 请求发送失败，没有收到服务器响应
+							console.error('No response received:', error.request);
+						} else {
+							// 其他错误，例如配置错误
+							console.error('Axios error:', error.message);
 						}
-					);
-					// 保存用户信息到sessionStorage
-					sessionStorage.setItem(
-						'userInfo',
-						JSON.stringify(response.data.data)
-					);
-					// 跳转到dashboard界面
-					router.push('/dashboard');
-				} catch (error) {
-					// console.error('Error creating user:', error);
-					// 打印详细错误信息
-					if (error.response) {
-						// 请求成功发送，但服务器返回状态码错误
-						console.error('Response error:', error.response.data);
-						console.error('Status code:', error.response.status);
-					} else if (error.request) {
-						// 请求发送失败，没有收到服务器响应
-						console.error('No response received:', error.request);
-					} else {
-						// 其他错误，例如配置错误
-						console.error('Axios error:', error.message);
 					}
+				} else {
+					console.error('firebase注册失败，请重新创建账号');
 				}
+			} else {
+				console.log(error);
 			}
 		} catch (err) {
 			console.error(err);

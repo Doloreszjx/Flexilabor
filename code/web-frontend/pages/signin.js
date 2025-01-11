@@ -25,24 +25,22 @@ function Signin() {
 		e.preventDefault();
 		try {
 			const res = await signInWithEmailAndPassword(email, password);
-			console.log({ email, password });
 			if (res) {
 				const user = auth.currentUser;
 				if (user && user.getIdToken) {
-					const token = await user.getIdToken();
+					const token = await user.getIdToken(true);
 					sessionStorage.setItem('token', token);
 
+					console.log({ user });
+
 					try {
-						console.log(
-							`${process.env.NEXT_PUBLIC_BACKEND_URI}/users/${email}`
-						);
 						const response = await axios.get(
-							`${process.env.NEXT_PUBLIC_BACKEND_URI}/users/${email}`,
-							{
-								headers: {
-									Authorization: `Bearer ${token}`,
-								},
-							}
+							`${process.env.NEXT_PUBLIC_BACKEND_URI}/users/${email}`
+							// {
+							// 	headers: {
+							// 		Authorization: `Bearer ${token}`, // 调用本地接口不需要进行firebase认证
+							// 	},
+							// }
 						);
 
 						console.log({ response });

@@ -39,7 +39,7 @@ const authenticateUser = async (req, res, next) => {
 	const authHeader = req.headers.authorization;
 
 	if (!authHeader || !authHeader.startsWith('Bearer ')) {
-		return errorRes(res, 'Token unavailable', null, 401);
+		return errorRes(res, 'Token unavailable11111', null, 401);
 	}
 
 	try {

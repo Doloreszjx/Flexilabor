@@ -45,7 +45,6 @@ function Header() {
 		setuser(user);
 	}, []);
 
-	console.log({ user });
 	useEffect(() => {
 		if (user) {
 			setMenuItems([
