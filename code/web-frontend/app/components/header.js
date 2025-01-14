@@ -41,8 +41,11 @@ function Header() {
 	// const [user] = useAuthState(auth);
 	const [user, setuser] = useState();
 	useEffect(() => {
-		const user = JSON.parse(sessionStorage.getItem('userInfo'));
-		setuser(user);
+		const rowUserInfo = sessionStorage.getItem('userInfo');
+		if (!!rowUserInfo && rowUserInfo != 'undefined') {
+			const user = JSON.parse(rowUserInfo);
+			setuser(user);
+		}
 	}, []);
 
 	useEffect(() => {
