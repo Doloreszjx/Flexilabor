@@ -58,6 +58,7 @@ function DashboardAnalytics() {
 	//   fetchJobs();
 	// }, []);
 	useEffect(() => {
+		debugger;
 		const storedUserInfo = sessionStorage.getItem('userInfo');
 		console.log({ storedUserInfo });
 		const parsedUserInfo = storedUserInfo ? JSON.parse(storedUserInfo) : {};
@@ -70,10 +71,11 @@ function DashboardAnalytics() {
 					`${process.env.NEXT_PUBLIC_BACKEND_URI}/transaction/${parsedUserInfo.uid}`,
 					{
 						headers: {
-							Authorization: `Bearer ${sessionStorage.getItem('token')}`,
+							Authorization: `Bearer ${sessionStorage.getItem('token')}`, // test: 暂时先把校验关了
 						},
 					}
 				);
+				console.log({ response });
 				setBalance(response.data.data.netBalance);
 			} catch (err) {
 				console.error('Failed to load transactions. Please try again later.');

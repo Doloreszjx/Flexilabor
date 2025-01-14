@@ -35,12 +35,12 @@ function Signin() {
 
 					try {
 						const response = await axios.get(
-							`${process.env.NEXT_PUBLIC_BACKEND_URI}/users/${email}`
-							// {
-							// 	headers: {
-							// 		Authorization: `Bearer ${token}`, // 调用本地接口不需要进行firebase认证
-							// 	},
-							// }
+							`${process.env.NEXT_PUBLIC_BACKEND_URI}/users/${email}`,
+							{
+								headers: {
+									Authorization: `Bearer ${token}`, // 调用本地接口不需要进行firebase认证
+								},
+							}
 						);
 
 						console.log({ response });

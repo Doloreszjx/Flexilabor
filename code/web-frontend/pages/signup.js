@@ -86,7 +86,7 @@ function Signup() {
 							{
 								headers: {
 									'Content-Type': 'application/json',
-									// Authorization: `Bearer ${token}`, // 调用本地接口不需要进行firebase认证
+									Authorization: `Bearer ${token}`, // 调用本地接口不需要进行firebase认证
 								},
 								withCredentials: true, // 确保支持跨域凭据
 							}
