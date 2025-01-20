@@ -2,6 +2,7 @@
 import Image from 'next/image';
 import Header from './components/header';
 import Footer from './components/footer';
+import Link from 'next/link'
 
 export default function Home() {
 	return (
@@ -19,6 +20,8 @@ export default function Home() {
 							From electricians to gardeners, we can help you hire.
 						</p>
 
+						
+
 						<div className='space-x-4 mb-6' style={{ display: 'flex' }}>
 							<a
 								href='#'
@@ -26,12 +29,20 @@ export default function Home() {
 							>
 								Browse Jobs for Contractor
 							</a>
-							<a
-								href='#'
-								className='bg-transparent border border-white text-white px-6 py-3 rounded-lg hover:bg-white hover:text-[#01ABF0]'
-							>
+							
+							<Link href="/jobsearch" passHref>
+								<button className='bg-transparent border border-white text-white px-6 py-3 rounded-lg hover:bg-white hover:text-[#01ABF0]'>
 								Browse Jobs for Workers
-							</a>
+								</button>
+							</Link>
+							{/* <link href="/jobsearch">
+								<a
+									href='#'
+									className='bg-transparent border border-white text-white px-6 py-3 rounded-lg hover:bg-white hover:text-[#01ABF0]'
+								>
+									Browse Jobs for Workers
+								</a>						
+							</link>							 */}
 						</div>
 					</div>
 

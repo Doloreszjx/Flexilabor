@@ -58,7 +58,7 @@ function DashboardAnalytics() {
 	//   fetchJobs();
 	// }, []);
 	useEffect(() => {
-		debugger;
+		// debugger;
 		const storedUserInfo = sessionStorage.getItem('userInfo');
 		console.log({ storedUserInfo });
 		const parsedUserInfo = storedUserInfo ? JSON.parse(storedUserInfo) : {};
