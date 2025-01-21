@@ -51,6 +51,7 @@
     color: red;
   }
   
+
   /* Add some responsive design */
   @media (max-width: 768px) {
     .job-search-container {
@@ -75,3 +76,23 @@
       margin-bottom: 15px;
     }
   }
+.search-filter input {
+  border: 1px solid #d3d3d3; 
+  padding: 8px;
+  border-radius: 4px; 
+  margin-bottom: 15px;
+}
+
+.search-filter input:focus {
+  border-color: #a0a0a0; /* 聚焦时改变边框颜色 */
+  outline: none; /* 去掉聚焦时默认的外框 */
+}
+
+.filters input {
+  color: #a0a0a0;
+}
+
+.filters input:focus {
+  border-color: #a0a0a0; /* 聚焦时改变边框颜色 */
+  outline: none; /* 去掉聚焦时默认的外框 */
+}
