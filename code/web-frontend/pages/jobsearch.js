@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import Header from './header';
+import Footer from './footer';
 import axios from 'axios';
+import './styles.css'; 
 
 const JobSearch = () => {
   const [searchKeyword, setSearchKeyword] = useState('');  // 搜索关键词
@@ -51,58 +54,62 @@ const JobSearch = () => {
   }, [searchKeyword, selectedJobTypes]);
 
   return (
-    <div className="job-search-container">
-      <div className="search-filter">
-        <input
-          type="text"
-          placeholder="Search Keywords"
-          value={searchKeyword}
-          onChange={(e) => setSearchKeyword(e.target.value)}  // 更新搜索关键词
-        />
-        <div className="filters">
-          <label>
-            <input
-              type="checkbox"
-              name="fullTime"
-              checked={selectedJobTypes.fullTime}
-              onChange={handleJobTypeChange}  // 更新全职职位筛选条件
-            />
-            Full-Time
-          </label>
-          <label>
-            <input
-              type="checkbox"
-              name="partTime"
-              checked={selectedJobTypes.partTime}
-              onChange={handleJobTypeChange}  // 更新兼职职位筛选条件
-            />
-            Part-Time
-          </label>
-          <label>
-            <input
-              type="checkbox"
-              name="contract"
-              checked={selectedJobTypes.contract}
-              onChange={handleJobTypeChange}  // 更新合同职位筛选条件
-            />
-            Contract
-          </label>
+    <div>
+      <Header />
+        <div className="job-search-container">
+        <div className="search-filter">
+          <input
+            type="text"
+            placeholder="Search Keywords"
+            value={searchKeyword}
+            onChange={(e) => setSearchKeyword(e.target.value)}  // 更新搜索关键词
+          />
+          <div className="filters">
+            <label>
+              <input
+                type="checkbox"
+                name="fullTime"
+                checked={selectedJobTypes.fullTime}
+                onChange={handleJobTypeChange}  // 更新全职职位筛选条件
+              />
+              Full-Time
+            </label>
+            <label>
+              <input
+                type="checkbox"
+                name="partTime"
+                checked={selectedJobTypes.partTime}
+                onChange={handleJobTypeChange}  // 更新兼职职位筛选条件
+              />
+              Part-Time
+            </label>
+            <label>
+              <input
+                type="checkbox"
+                name="contract"
+                checked={selectedJobTypes.contract}
+                onChange={handleJobTypeChange}  // 更新合同职位筛选条件
+              />
+              Contract
+            </label>
+          </div>
+        </div>
+
+        <div className="job-list">
+          {filteredJobs.map((job) => (
+            <div className="job-card" key={job.title}>
+              <img src={job.image} alt={job.title} />
+              <div className="job-info">
+                <h3>{job.title}</h3>
+                <p>{job.description}</p>
+                <p>{job.time}</p>
+                <p>{job.jobType}</p>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
-
-      <div className="job-list">
-        {filteredJobs.map((job) => (
-          <div className="job-card" key={job.title}>
-            <img src={job.image} alt={job.title} />
-            <div className="job-info">
-              <h3>{job.title}</h3>
-              <p>{job.description}</p>
-              <p>{job.time}</p>
-              <p>{job.jobType}</p>
-            </div>
-          </div>
-        ))}
-      </div>
+      <Footer />
     </div>
   );
 };
