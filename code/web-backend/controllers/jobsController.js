@@ -3,7 +3,6 @@ const { successRes, errorRes } = require('../helpers/apiResponse');
 
 // Create job
 exports.createJob = async (req, res) => {
-	console.log({ req });
 	try {
 		const job = new Jobs(req.body);
 		await job.save();
@@ -16,7 +15,10 @@ exports.createJob = async (req, res) => {
 // Get jobs based on the logged in user role
 exports.getAllJobs = async (req, res) => {
 	try {
+		console.log('req.params.postedBy:', req.params.postedBy);
+
 		const jobs = await Jobs.find({ 'postedBy.role': req.params.postedBy });
+		console.log({ jobs });
 		if (!jobs || jobs.length === 0) {
 			return errorRes(res, 'No Jobs found', null, 404);
 		}
