@@ -13,16 +13,25 @@ exports.createJob = async (req, res) => {
 };
 
 // Get jobs based on the logged in user role
-exports.getAllJobs = async (req, res) => {
-	try {
-		console.log('req.params.postedBy:', req.params.postedBy);
+// exports.getAllJobs = async (req, res) => {
+// 	try {
+// 		const jobs = await Jobs.find({ 'postedBy.role': req.params.postedBy });
+// 		if (!jobs || jobs.length === 0) {
+// 			return errorRes(res, 'No Jobs found', null, 404);
+// 		}
 
+// 		successRes(res, `Jobs posted by ${req.params.postedBy}`, jobs);
+// 	} catch (error) {
+// 		errorRes(res, 'Error retrieving jobs', error);
+// 	}
+// };
+exports.getAllJobs = async (req, res) => {
+	console.log('Received request for postedBy:', req.params.postedBy); // 确保正确收到参数
+	try {
 		const jobs = await Jobs.find({ 'postedBy.role': req.params.postedBy });
-		console.log({ jobs });
 		if (!jobs || jobs.length === 0) {
 			return errorRes(res, 'No Jobs found', null, 404);
 		}
-
 		successRes(res, `Jobs posted by ${req.params.postedBy}`, jobs);
 	} catch (error) {
 		errorRes(res, 'Error retrieving jobs', error);
