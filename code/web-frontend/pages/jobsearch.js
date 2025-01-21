@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import Header from './header';
-import Footer from './footer';
+import Footer from '@/app/components/footer';
+import Header from '@/app/components/header';
 import axios from 'axios';
 import './styles.css'; 
 
@@ -17,7 +17,8 @@ const JobSearch = () => {
   // 获取所有职位数据
   const fetchJobs = async () => {
     try {
-      const response = await axios.get('/api/jobs');  // 从后端获取所有职位数据
+      const postedBy = 'someValue'; // 这里应该是动态获取的值
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URI}/jobs/${postedBy}`);  // 从后端获取所有职位数据
       setAllJobs(response.data);  // 保存所有职位数据
       setFilteredJobs(response.data);  // 初始时显示所有职位
     } catch (error) {
