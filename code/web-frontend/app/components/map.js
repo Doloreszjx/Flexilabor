@@ -39,15 +39,19 @@ export const Map = ({ searchResults }) => {
 					latitude: result.features[0].geometry.coordinates[1],
 				}));
 				setCoordinates(newCoordinates);
-
-				const center = getCenter(newCoordinates);
-				setViewport({
-					width: '100%',
-					height: '100%',
-					latitude: center.latitude,
-					longitude: center.longitude,
-					zoom: 11,
-				});
+				if (newCoordinates.length > 0) {
+					const center = getCenter(newCoordinates);
+					setViewport({
+						width: '100%',
+						height: '100%',
+						latitude: center.latitude,
+						longitude: center.longitude,
+						zoom: 11,
+					});
+				} else {
+					console.warn('No valid coordinates found for center calculation.');
+				}
+				
 			} catch (err) {
 				console.error('Error fetching geocode data:', err);
 			}

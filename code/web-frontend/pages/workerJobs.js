@@ -101,7 +101,12 @@ function WorkerJobs() {
                 <JobDetails details={selectedJob} />
               ) : (
                 <section className="hidden lg:inline-flex w-full">
-                  <Map searchResults={filteredJobs.map(el => el.address)} />
+                  {/* <Map searchResults={filteredJobs.map(el => el.address)} /> */}
+                  <Map
+                    searchResults={filteredJobs
+                      .map((el) => el.address)
+                      .filter((address) => address && address.latitude && address.longitude)} // 确保地址有效
+                  />
                 </section>
               )}
             </div>
