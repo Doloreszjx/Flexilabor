@@ -18,9 +18,9 @@ function ContractorJobs() {
 	const [user] = useAuthState(auth);
 	const [searchTerm, setSearchTerm] = useState('');
 	const [selectedJobTypes, setSelectedJobTypes] = useState({
-		'Full-time': false,
-		'Part-time': false,
-		Contract: false,
+		'Full-time': true,
+		'Part-time': true,
+		Contract: true,
 	});
 
 	// Fetch jobs from the backend
