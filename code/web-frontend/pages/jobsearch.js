@@ -1,118 +1,213 @@
-import React, { useState, useEffect } from 'react';
+import JobCard from '@/app/components/jobcard';
+import JobDetails from '@/app/components/jobdetails';
+import React, { useEffect, useState } from 'react';
 import Footer from '@/app/components/footer';
 import Header from '@/app/components/header';
+import Map from '@/app/components/map';
 import axios from 'axios';
-import './styles.css'; 
+import { auth } from '../app/firebase/config';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import ErrorPage from './errorPage';
 
-const JobSearch = () => {
-  const [searchKeyword, setSearchKeyword] = useState('');  // 搜索关键词
-  const [selectedJobTypes, setSelectedJobTypes] = useState({
-    fullTime: true,
-    partTime: true,
-    contract: true,
-  });
-  const [allJobs, setAllJobs] = useState([]);  // 所有职位数据
-  const [filteredJobs, setFilteredJobs] = useState([]);  // 筛选后的职位数据
+function ContractorJobs() {
+	const [jobs, setJobs] = useState([]);
+	const [filteredJobs, setFilteredJobs] = useState([]);
+	const [selectedJob, setSelectedJob] = useState(null);
+	const [loading, setLoading] = useState(true);
+	const [error, setError] = useState(null);
+	const [user] = useAuthState(auth);
+	const [searchTerm, setSearchTerm] = useState('');
+	const [selectedJobTypes, setSelectedJobTypes] = useState({
+		'Full-time': false,
+		'Part-time': false,
+		Contract: false,
+	});
 
-  // 获取所有职位数据
-  const fetchJobs = async () => {
-    try {
-      const postedBy = 'someValue'; // 这里应该是动态获取的值
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URI}/jobs/${postedBy}`);  // 从后端获取所有职位数据
-      setAllJobs(response.data);  // 保存所有职位数据
-      setFilteredJobs(response.data);  // 初始时显示所有职位
-    } catch (error) {
-      console.error('Error fetching jobs:', error);
-    }
-  };
+	// Fetch jobs from the backend
+	useEffect(() => {
+		const fetchJobs = async () => {
+			try {
+				const response = await axios.get(
+					`${process.env.NEXT_PUBLIC_BACKEND_URI}/offlinejobs`
+				);
+				setJobs(response.data.data); // Don't filter by role, keep all jobs
+				setFilteredJobs(response.data.data);
+				setLoading(false);
+			} catch (err) {
+				setError('Failed to load jobs. Please try again later.');
+				setLoading(false);
+			}
+		};
 
-  // 根据搜索关键词和职位类型筛选职位
-  const filterJobs = () => {
-    const jobTypes = [];
-    if (selectedJobTypes.fullTime) jobTypes.push('Full-time');
-    if (selectedJobTypes.partTime) jobTypes.push('Part-time');
-    if (selectedJobTypes.contract) jobTypes.push('Contract');
+		fetchJobs();
+	}, [user]);
 
-    const filtered = allJobs.filter((job) => {
-      const matchesTitle = job.title.toLowerCase().includes(searchKeyword.toLowerCase());  // 根据标题筛选
-      const matchesJobType = jobTypes.includes(job.jobType);  // 根据职位类型筛选
-      return matchesTitle && matchesJobType;
-    });
-    setFilteredJobs(filtered);  // 更新筛选后的职位列表
-  };
+	// Filter jobs based on search term and selected job types
+	useEffect(() => {
+		let filtered = jobs;
 
-  const handleJobTypeChange = (event) => {
-    const { name, checked } = event.target;
-    setSelectedJobTypes((prev) => ({ ...prev, [name]: checked }));
-  };
+		// Filter by search term
+		if (searchTerm) {
+			filtered = filtered.filter((job) =>
+				job.title.toLowerCase().includes(searchTerm.toLowerCase())
+			);
+		}
 
-  useEffect(() => {
-    fetchJobs();  // 获取所有职位数据
-  }, []);
+		// Filter by selected job types
+		if (Object.values(selectedJobTypes).includes(true)) {
+			filtered = filtered.filter((job) =>
+				selectedJobTypes[job.jobType] === true
+			);
+		}
 
-  useEffect(() => {
-    filterJobs();  // 每次搜索关键词或职位类型更改时筛选职位
-  }, [searchKeyword, selectedJobTypes]);
+		setFilteredJobs(filtered);
+	}, [searchTerm, jobs, selectedJobTypes]);
 
-  return (
-    <div>
-      <Header />
-        <div className="job-search-container">
-        <div className="search-filter">
-          <input
-            type="text"
-            placeholder="Search Keywords"
-            value={searchKeyword}
-            onChange={(e) => setSearchKeyword(e.target.value)}  // 更新搜索关键词
-          />
-          <div className="filters">
-            <label>
-              <input
-                type="checkbox"
-                name="fullTime"
-                checked={selectedJobTypes.fullTime}
-                onChange={handleJobTypeChange}  // 更新全职职位筛选条件
-              />
-              Full-Time
-            </label>
-            <label>
-              <input
-                type="checkbox"
-                name="partTime"
-                checked={selectedJobTypes.partTime}
-                onChange={handleJobTypeChange}  // 更新兼职职位筛选条件
-              />
-              Part-Time
-            </label>
-            <label>
-              <input
-                type="checkbox"
-                name="contract"
-                checked={selectedJobTypes.contract}
-                onChange={handleJobTypeChange}  // 更新合同职位筛选条件
-              />
-              Contract
-            </label>
-          </div>
-        </div>
+	// Handle job type checkbox change
+	const handleJobTypeChange = (event) => {
+		const { name, checked } = event.target;
+		setSelectedJobTypes((prev) => ({
+			...prev,
+			[name]: checked,
+		}));
+	};
 
-        <div className="job-list">
-          {filteredJobs.map((job) => (
-            <div className="job-card" key={job.title}>
-              <img src={job.image} alt={job.title} />
-              <div className="job-info">
-                <h3>{job.title}</h3>
-                <p>{job.description}</p>
-                <p>{job.time}</p>
-                <p>{job.jobType}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-      <Footer />
-    </div>
-  );
-};
+	if (error) return <ErrorPage />;
 
-export default JobSearch;
+	return (
+		<div className='bg-blue-50'>
+			<Header />
+
+			{loading ? (
+				<div className='flex items-center justify-center min-h-screen'>
+					<svg
+						className='animate-spin -ml-1 mr-3 h-5 w-5 text-[#01abf0]'
+						xmlns='http://www.w3.org/2000/svg'
+						fill='none'
+						viewBox='0 0 24 24'
+					>
+						<circle
+							className='opacity-25'
+							cx='12'
+							cy='12'
+							r='10'
+							stroke='currentColor'
+							strokeWidth='4'
+						></circle>
+						<path
+							className='opacity-75'
+							fill='currentColor'
+							d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z'
+						></path>
+					</svg>
+					Loading...
+				</div>
+			) : (
+				<div className='container py-12 px-8 max-w-screen-xl mx-auto'>
+					<div className='grid gap-6 grid-cols-1 lg:grid-cols-3 min-h-screen'>
+						<div className='col-span-1'>
+							{/* Search bar */}
+							<div className='relative mb-8'>
+								<input
+									type='text'
+									id='Search'
+									placeholder='Search for...'
+									value={searchTerm}
+									onChange={(e) => setSearchTerm(e.target.value)}
+									className='w-full rounded-md border-gray-200 py-2.5 px-2 pe-10 shadow-sm sm:text-sm'
+								/>
+								<span className='absolute w-10 inset-y-0 end-0 grid  place-content-center'>
+									<button
+										type='button'
+										className='text-gray-600 hover:text-gray-700'
+									>
+										<span className='sr-only'>Search</span>
+										<svg
+											xmlns='http://www.w3.org/2000/svg'
+											fill='none'
+											viewBox='0 0 24 24'
+											strokeWidth='1.5'
+											stroke='currentColor'
+											className='size-4'
+										>
+											<path
+												strokeLinecap='round'
+												strokeLinejoin='round'
+												d='M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z'
+											/>
+										</svg>
+									</button>
+								</span>
+							</div>
+
+							{/* Job Type Filters */}
+							<div className='mb-8'>
+								<div>
+									<input
+										type='checkbox'
+										id='Full-time'
+										name='Full-time'
+										checked={selectedJobTypes['Full-time']}
+										onChange={handleJobTypeChange}
+									/>
+									<label htmlFor='Full-time' className='ml-2'>
+										Full-time
+									</label>
+								</div>
+								<div>
+									<input
+										type='checkbox'
+										id='Part-time'
+										name='Part-time'
+										checked={selectedJobTypes['Part-time']}
+										onChange={handleJobTypeChange}
+									/>
+									<label htmlFor='Part-time' className='ml-2'>
+										Part-time
+									</label>
+								</div>
+								<div>
+									<input
+										type='checkbox'
+										id='Contract'
+										name='Contract'
+										checked={selectedJobTypes['Contract']}
+										onChange={handleJobTypeChange}
+									/>
+									<label htmlFor='Contract' className='ml-2'>
+										Contract
+									</label>
+								</div>
+							</div>
+
+							{/* Display filtered jobs */}
+							{filteredJobs.map((job) => (
+								<JobCard
+									key={job._id}
+									job={job}
+									selectedJob={selectedJob}
+									onClick={() => setSelectedJob(job)}
+								/>
+							))}
+						</div>
+
+						{/* Job Details or Map */}
+						<div className='col-span-2 w-full inline-flex'>
+							{selectedJob ? (
+								<JobDetails details={selectedJob} />
+							) : (
+								<section className='hidden lg:inline-flex w-full'>
+									<Map searchResults={filteredJobs.map((el) => el.address)} />
+								</section>
+							)}
+						</div>
+					</div>
+				</div>
+			)}
+
+			<Footer />
+		</div>
+	);
+}
+
+export default ContractorJobs;
