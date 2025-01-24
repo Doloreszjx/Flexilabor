@@ -17,7 +17,7 @@ function Header() {
 		},
 		{
 			label: 'Worker Jobs',
-			link: '/workerJobs',
+			link: '/jobsearch',
 		},
 		{
 			label: 'How it works',
