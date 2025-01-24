@@ -3,11 +3,11 @@ import JobDetails from '@/app/components/jobdetails';
 import React, { useEffect, useState } from 'react';
 import Footer from '@/app/components/footer';
 import Header from '@/app/components/header';
-import Map from '@/app/components/map';
 import axios from 'axios';
 import { auth } from '../app/firebase/config';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import ErrorPage from './errorPage';
+import './styles.css'; 
 
 function ContractorJobs() {
 	const [jobs, setJobs] = useState([]);
@@ -22,6 +22,7 @@ function ContractorJobs() {
 		'Part-time': true,
 		Contract: true,
 	});
+	const [viewJobDetails, setViewJobDetails] = useState(false); // To toggle between job list and job details
 
 	// Fetch jobs from the backend
 	useEffect(() => {
@@ -72,6 +73,17 @@ function ContractorJobs() {
 		}));
 	};
 
+	// Handle job card click to display job details
+	const handleJobClick = (job) => {
+		setSelectedJob(job);
+		setViewJobDetails(true); // Set viewJobDetails to true when a job is clicked
+	};
+
+	// Handle return to job list
+	const handleReturnToJobList = () => {
+		setViewJobDetails(false); // Set viewJobDetails to false to go back to job list
+	};
+
 	if (error) return <ErrorPage />;
 
 	return (
@@ -105,6 +117,7 @@ function ContractorJobs() {
 			) : (
 				<div className='container py-12 px-8 max-w-screen-xl mx-auto'>
 					<div className='grid gap-6 grid-cols-1 lg:grid-cols-3 min-h-screen'>
+						{/* Left Side: Search Box and Filters */}
 						<div className='col-span-1'>
 							{/* Search bar */}
 							<div className='relative mb-8'>
@@ -116,28 +129,6 @@ function ContractorJobs() {
 									onChange={(e) => setSearchTerm(e.target.value)}
 									className='w-full rounded-md border-gray-200 py-2.5 px-2 pe-10 shadow-sm sm:text-sm'
 								/>
-								<span className='absolute w-10 inset-y-0 end-0 grid  place-content-center'>
-									<button
-										type='button'
-										className='text-gray-600 hover:text-gray-700'
-									>
-										<span className='sr-only'>Search</span>
-										<svg
-											xmlns='http://www.w3.org/2000/svg'
-											fill='none'
-											viewBox='0 0 24 24'
-											strokeWidth='1.5'
-											stroke='currentColor'
-											className='size-4'
-										>
-											<path
-												strokeLinecap='round'
-												strokeLinejoin='round'
-												d='M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z'
-											/>
-										</svg>
-									</button>
-								</span>
 							</div>
 
 							{/* Job Type Filters */}
@@ -179,26 +170,34 @@ function ContractorJobs() {
 									</label>
 								</div>
 							</div>
-
-							{/* Display filtered jobs */}
-							{filteredJobs.map((job) => (
-								<JobCard
-									key={job._id}
-									job={job}
-									selectedJob={selectedJob}
-									onClick={() => setSelectedJob(job)}
-								/>
-							))}
 						</div>
 
-						{/* Job Details or Map */}
-						<div className='col-span-2 w-full inline-flex'>
-							{selectedJob ? (
-								<JobDetails details={selectedJob} />
+						{/* Right Side: Job List or Job Details */}
+						<div className='col-span-2'>
+							{/* Show job details if selectedJob is set */}
+							{viewJobDetails ? (
+								<div>
+									{/* Back Button */}
+									<button
+										className='back-button mb-4'
+										onClick={handleReturnToJobList}
+									>
+										Back to Job List
+									</button>
+
+									<JobDetails details={selectedJob} />
+								</div>
 							) : (
-								<section className='hidden lg:inline-flex w-full'>
-									<Map searchResults={filteredJobs.map((el) => el.address)} />
-								</section>
+								<div>
+									{filteredJobs.map((job) => (
+										<JobCard
+											key={job._id}
+											job={job}
+											selectedJob={selectedJob}
+											onClick={() => handleJobClick(job)}
+										/>
+									))}
+								</div>
 							)}
 						</div>
 					</div>

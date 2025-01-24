@@ -1,98 +1,15 @@
-/* Job List Section */
-.job-list {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-  }
-  
-  .job-card {
-    display: flex;
-    flex-direction: row;
-    padding: 20px;
-    background-color: #fff;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s ease-in-out;
-    cursor: pointer;
-  }
-  
-  .job-card:hover {
-    transform: translateY(-5px);
-  }
-  
-  .job-card img {
-    width: 80px;
-    height: 80px;
-    margin-right: 20px;
-    object-fit: cover;
-    border-radius: 5px;
-  }
-  
-  .job-info {
-    flex-grow: 1;
-  }
-  
-  .job-info h3 {
-    font-size: 18px;
-    font-weight: 600;
-    color: #007bff;
-    margin-bottom: 10px;
-  }
-  
-  .job-info p {
-    font-size: 14px;
-    margin-bottom: 5px;
-    color: #555;
-  }
-  
-  .job-info .salary {
-    font-size: 16px;
-    font-weight: 600;
-    color: red;
-  }
-  
 
-  /* Add some responsive design */
-  @media (max-width: 768px) {
-    .job-search-container {
-      width: 90%;
-    }
-  
-    .search-box input,
-    .location-box input {
-      max-width: 100%;
-    }
-  
-    .job-list {
-      gap: 15px;
-    }
-  
-    .job-card {
-      flex-direction: column;
-      align-items: center;
-    }
-  
-    .job-card img {
-      margin-bottom: 15px;
-    }
-  }
-.search-filter input {
-  border: 1px solid #d3d3d3; 
-  padding: 8px;
-  border-radius: 4px; 
-  margin-bottom: 15px;
+.back-button {
+  background-color: #1e90ff;  /* Blue background color */
+  color: white;  
+  padding: 10px 20px;  
+  border: none;  
+  border-radius: 5px;  
+  font-size: 16px;  
+  cursor: pointer;  
+  transition: background-color 0.3s ease;  
 }
 
-.search-filter input:focus {
-  border-color: #a0a0a0; /* 聚焦时改变边框颜色 */
-  outline: none; /* 去掉聚焦时默认的外框 */
-}
-
-.filters input {
-  color: #a0a0a0;
-}
-
-.filters input:focus {
-  border-color: #a0a0a0; /* 聚焦时改变边框颜色 */
-  outline: none; /* 去掉聚焦时默认的外框 */
+.back-button:hover {
+  background-color: #0066cc;  
 }
